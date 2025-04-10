@@ -174,4 +174,7 @@ cython_debug/
 .pypirc
 
 # Dev Files
-*-dev
+*-dev.py
+# *.dev.??
+# all files ending in dev
+*dev
