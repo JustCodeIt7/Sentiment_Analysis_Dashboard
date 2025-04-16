@@ -10,6 +10,69 @@ import time
 import re
 
 
+# -------------- App Config --------------
+def setup_page():
+    """Configure the Streamlit page layout and appearance"""
+    st.set_page_config(
+        page_title="Stock Sentiment Analysis",
+        page_icon="📈",
+        layout="wide",
+        initial_sidebar_state="expanded"
+    )
+
+
+def create_main_section():
+    """Create the main app title and description"""
+    st.title("📈 Stock News Sentiment Analyzer")
+    st.write(
+        "Enter a stock ticker to get sentiment analysis based on recent news."
+    )
+    st.markdown("---")
+
+
+def initialize_session_state():
+    """Initialize the session state variables if they don't exist"""
+    if 'ticker' not in st.session_state:
+        st.session_state.ticker = ""
+    if 'avg_polarity' not in st.session_state:
+        st.session_state.avg_polarity = 0.0
+    if 'avg_subjectivity' not in st.session_state:
+        st.session_state.avg_subjectivity = 0.0
+    if 'overall_sentiment' not in st.session_state:
+        st.session_state.overall_sentiment = "Neutral"
+    if 'news_df' not in st.session_state:
+        st.session_state.news_df = pd.DataFrame()
+    if 'combined_sentiment' not in st.session_state:
+        st.session_state.combined_sentiment = None
+    if 'analysis_performed' not in st.session_state:
+        st.session_state.analysis_performed = False
+    if 'num_articles' not in st.session_state:
+        st.session_state.num_articles = 5
+
+
+def create_sidebar():
+    """Create the sidebar with information about the app"""
+    # Options section
+    st.sidebar.header("Settings")
+
+    # Number of articles to fetch for stock news analysis
+    st.sidebar.slider(
+        "Number of news articles to analyze",
+        min_value=1,
+        max_value=10,
+        value=st.session_state.get('num_articles', 5),
+        key="num_articles"
+    )
+
+    # Add a button to clear results
+    if st.sidebar.button("Clear Saved Results"):
+        st.session_state.analysis_performed = False
+        st.session_state.ticker = ""
+        st.session_state.news_df = pd.DataFrame()
+        st.session_state.combined_sentiment = None
+        st.rerun()
+
+
 # -------------- UTILITY FUNCTIONS --------------
 
 def analyze_sentiment(text):
@@ -271,68 +334,6 @@ def calculate_combined_sentiment(article_texts):
 
 
 # -------------- UI FUNCTIONS --------------
-
-def setup_page():
-    """Configure the Streamlit page layout and appearance"""
-    st.set_page_config(
-        page_title="Stock Sentiment Analysis",
-        page_icon="📈",
-        layout="wide",
-        initial_sidebar_state="expanded"
-    )
-
-
-def create_main_section():
-    """Create the main app title and description"""
-    st.title("📈 Stock News Sentiment Analyzer")
-    st.write(
-        "Enter a stock ticker to get sentiment analysis based on recent news."
-    )
-    st.markdown("---")
-
-
-def initialize_session_state():
-    """Initialize the session state variables if they don't exist"""
-    if 'ticker' not in st.session_state:
-        st.session_state.ticker = ""
-    if 'avg_polarity' not in st.session_state:
-        st.session_state.avg_polarity = 0.0
-    if 'avg_subjectivity' not in st.session_state:
-        st.session_state.avg_subjectivity = 0.0
-    if 'overall_sentiment' not in st.session_state:
-        st.session_state.overall_sentiment = "Neutral"
-    if 'news_df' not in st.session_state:
-        st.session_state.news_df = pd.DataFrame()
-    if 'combined_sentiment' not in st.session_state:
-        st.session_state.combined_sentiment = None
-    if 'analysis_performed' not in st.session_state:
-        st.session_state.analysis_performed = False
-    if 'num_articles' not in st.session_state:
-        st.session_state.num_articles = 5
-
-
-def create_sidebar():
-    """Create the sidebar with information about the app"""
-    # Options section
-    st.sidebar.header("Settings")
-
-    # Number of articles to fetch for stock news analysis
-    st.sidebar.slider(
-        "Number of news articles to analyze",
-        min_value=1,
-        max_value=10,
-        value=st.session_state.get('num_articles', 5),
-        key="num_articles"
-    )
-
-    # Add a button to clear results
-    if st.sidebar.button("Clear Saved Results"):
-        st.session_state.analysis_performed = False
-        st.session_state.ticker = ""
-        st.session_state.news_df = pd.DataFrame()
-        st.session_state.combined_sentiment = None
-        st.experimental_rerun()
-
 
 def display_combined_sentiment(combined_sentiment):
     """
