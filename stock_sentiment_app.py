@@ -150,10 +150,6 @@ def create_main_section():
     )
     st.markdown("---")  # Horizontal divider
 
-    # Display current date/time and user info with the correct format
-    st.caption(f"Current Date and Time (UTC): 2025-04-16 06:16:57")
-    st.caption(f"Current User's Login: jamesbmour")
-
 
 # -------------- SECTION 6: TEXT INPUT AREA --------------
 def create_text_input():
