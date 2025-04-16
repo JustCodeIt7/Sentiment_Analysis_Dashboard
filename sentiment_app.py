@@ -60,92 +60,17 @@ def analyze_sentiment(text):
     Returns:
         tuple: (polarity, subjectivity, sentiment_label, emoji)
     """
-    # Handle empty input
-    if not text:
-        return 0.0, 0.0, "Neutral", "😐"
-
-    # Process text with TextBlob
-    blob = TextBlob(text)
-    polarity = blob.sentiment.polarity  # -1 (negative) to 1 (positive)
-    subjectivity = blob.sentiment.subjectivity  # 0 (objective) to 1 (subjective)
-
-    # Classify sentiment based on polarity
-    if polarity > 0.1:
-        sentiment_label = "Positive"
-        emoji = "😊"
-    elif polarity < -0.1:
-        sentiment_label = "Negative"
-        emoji = "😠"
-    else:
-        sentiment_label = "Neutral"
-        emoji = "😐"
-
-    return polarity, subjectivity, sentiment_label, emoji
 
 
 # -------------- SECTION 5: TEXT INPUT AREA --------------
 def create_text_input():
     """Create and return the text input area"""
-    return st.text_area(
-        "Type or paste your text here:",
-        value="I absolutely love using Streamlit for creating interactive data apps! "
-              "It's intuitive, fast, and makes sharing my work with others a breeze. "
-              "The community is also incredibly helpful.",
-        height=150,
-        placeholder="E.g., 'Streamlit makes building web apps so easy and fun!'",
-        key="user_input_text"
-    )
 
 
 # -------------- SECTION 6: ANALYSIS & RESULTS --------------
 def perform_analysis(text):
     """Perform sentiment analysis and display results"""
-    # Only analyze if there's text
-    if not text:
-        st.warning("⚠️ Please enter some text above before analyzing.")
-        return
-
-    # Show analysis in progress
-    with st.spinner('Analyzing the text...'):
-        # Optional delay for demonstration purposes
-        # Perform the analysis
-        polarity, subjectivity, sentiment, emoji = analyze_sentiment(text)
-
-    # Display results section
-    st.subheader("📊 Analysis Results")
-
-    # Create a two-column layout
-    col1, col2 = st.columns(2)
-
-    # Column 1: Overall sentiment
-    with col1:
-        st.metric(
-            label="Overall Sentiment",
-            value=f"{sentiment} {emoji}"
-        )
-
-    # Column 2: Polarity score
-    with col2:
-        st.metric(
-            label="Polarity Score",
-            value=f"{polarity:.2f}",
-            help="Ranges from -1 (very negative) to +1 (very positive). Closer to 0 is more neutral."
-        )
-
-    # Subjectivity score (full width)
-    st.metric(
-        label="Subjectivity Score",
-        value=f"{subjectivity:.2f}",
-        help="Ranges from 0 (very objective) to 1 (very subjective)."
-    )
-
-    # Add explanation of the metrics
-    st.info("""
-    * **Sentiment:** The overall feeling expressed (Positive, Negative, or Neutral).
-    * **Polarity:** How positive or negative the text is.
-    * **Subjectivity:** How much the text expresses personal opinions vs. factual information.
-    """)
-
+   
 
 # -------------- SECTION 8: MAIN FUNCTION --------------
 def main():
