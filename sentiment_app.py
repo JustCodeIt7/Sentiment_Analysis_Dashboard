@@ -1,6 +1,5 @@
 # -------------- SECTION 1: IMPORTS --------------
 import streamlit as st
-from textblob import TextBlob
 
 
 # -------------- SECTION 2: PAGE CONFIGURATION --------------
@@ -17,11 +16,9 @@ def setup_page():
 # -------------- SECTION 3: MAIN APP LAYOUT --------------
 def create_sidebar():
     """Create the sidebar with information about the app"""
-    # About section
     st.sidebar.header("About This App")
     st.sidebar.info(
         "This app uses the **TextBlob** library to perform basic sentiment analysis. "
-        "It's designed as a demonstration for a YouTube tutorial on building web apps with Streamlit."
     )
 
     st.sidebar.header("How It Works")
@@ -33,7 +30,6 @@ def create_sidebar():
             * **Polarity**: Negative (-1) to Positive (+1)
             * **Subjectivity**: Objective (0) to Subjective (1)
         4. It classifies the sentiment based on the polarity score.
-        5. Results are displayed!
         """
     )
 
@@ -42,11 +38,10 @@ def create_main_section():
     """Create the main app title and description"""
     st.title("💬 Simple Sentiment Analysis App")
     st.write(
-        "Welcome to the Sentiment Analysis App for our YouTube Tutorial! "
         "Enter some text below, and we'll analyze its sentiment (Positive, Negative, or Neutral) "
         "using the TextBlob library."
     )
-    st.markdown("---")  # Horizontal divider
+    st.markdown("---")
 
 
 # -------------- SECTION 4: SENTIMENT ANALYSIS LOGIC --------------
@@ -70,7 +65,7 @@ def create_text_input():
 # -------------- SECTION 6: ANALYSIS & RESULTS --------------
 def perform_analysis(text):
     """Perform sentiment analysis and display results"""
-   
+
 
 # -------------- SECTION 8: MAIN FUNCTION --------------
 def main():
