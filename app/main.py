@@ -11,7 +11,6 @@ from config import setup_page, initialize_session_state, create_sidebar
 from ui import create_main_section, display_analysis_results
 from data import perform_stock_news_analysis
 
-
 def main():
     """Main entry point for the Stock Sentiment Analysis application"""
     # Step 1: Configure the page layout
@@ -46,20 +45,10 @@ def main():
     
     # Step 8: Perform analysis when button is pressed or if we have saved results
     if analyze_button:
-        results = perform_stock_news_analysis(ticker)
-        if results:
-            display_analysis_results(ticker, *results)
+        pass
     elif st.session_state.analysis_performed and st.session_state.ticker:
         # Display saved results
-        display_analysis_results(
-            st.session_state.ticker,
-            st.session_state.avg_polarity,
-            st.session_state.avg_subjectivity,
-            st.session_state.overall_sentiment,
-            st.session_state.news_df,
-            st.session_state.combined_sentiment
-        )
-
+        pass
 
 # Run the app
 if __name__ == "__main__":
