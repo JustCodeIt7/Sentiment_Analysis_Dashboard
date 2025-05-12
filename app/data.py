@@ -4,25 +4,25 @@ Data Collection and Processing
 Functions for fetching and analyzing stock news data.
 """
 
-import yfinance as yf
-import pandas as pd
-import streamlit as st
 import time
 
-from sentiment import analyze_sentiment, calculate_combined_sentiment
+import pandas as pd
+import streamlit as st
+import yfinance as yf
 from scraper import extract_article_text
+from sentiment import analyze_sentiment, calculate_combined_sentiment
 
 
 def get_stock_news(ticker_symbol, num_articles=5):
     """
-    Fetch recent news articles for a given stock ticker
+        Fetch recent news articles for a given stock ticker
 
-    Parameters:
-        ticker_symbol (str): The stock ticker symbol (e.g., 'AAPL')
-        num_articles (int): Number of articles to retrieve
+        Parameters:
+            ticker_symbol (str): The stock ticker symbol (e.g., 'AAPL')
+            num_articles (int): Number of articles to retrieve
 
-    Returns:
-        list: List of news dictionaries with 'title', 'link', and 'publisher'
+        Returns:
+            list: List of news dictionaries with 'title', 'link', and 'publisher'
     """
     try:
         # Get news using yf.Search
@@ -41,16 +41,16 @@ def get_stock_news(ticker_symbol, num_articles=5):
 
 def process_article(article, index, total_articles, status_text):
     """
-    Process a single news article to extract and analyze its content
+        Process a single news article to extract and analyze its content
 
-    Parameters:
-        article (dict): The article to process
-        index (int): The index of the article in the list
-        total_articles (int): Total number of articles
-        status_text (streamlit.delta_generator.DeltaGenerator): For status updates
+        Parameters:
+            article (dict): The article to process
+            index (int): The index of the article in the list
+            total_articles (int): Total number of articles
+            status_text (streamlit.delta_generator.DeltaGenerator): For status updates
 
-    Returns:
-        dict: Dictionary with article data and sentiment analysis
+        Returns:
+            dict: Dictionary with article data and sentiment analysis
     """
     status_text.text(f"Processing article {index + 1} of {total_articles}...")
 
@@ -100,14 +100,14 @@ def process_article(article, index, total_articles, status_text):
 
 def analyze_stock_news_sentiment(ticker_symbol, num_articles=5):
     """
-    Analyze sentiment of news articles for a stock
+        Analyze sentiment of news articles for a stock
 
-    Parameters:
-        ticker_symbol (str): The stock ticker symbol
-        num_articles (int): Number of articles to analyze
+        Parameters:
+            ticker_symbol (str): The stock ticker symbol
+            num_articles (int): Number of articles to analyze
 
-    Returns:
-        tuple: (avg_polarity, avg_subjectivity, overall_sentiment, news_df, combined_sentiment)
+        Returns:
+            tuple: (avg_polarity, avg_subjectivity, overall_sentiment, news_df, combined_sentiment)
     """
     news_articles = get_stock_news(ticker_symbol, num_articles)
 
@@ -168,13 +168,13 @@ def analyze_stock_news_sentiment(ticker_symbol, num_articles=5):
 
 def perform_stock_news_analysis(ticker):
     """
-    Perform sentiment analysis on stock news and save results to session state
+        Perform sentiment analysis on stock news and save results to session state
 
-    Parameters:
-        ticker (str): The stock ticker symbol to analyze
-        
-    Returns:
-        tuple or None: Analysis results or None if analysis couldn't be performed
+        Parameters:
+            ticker (str): The stock ticker symbol to analyze
+
+        Returns:
+            tuple or None: Analysis results or None if analysis couldn't be performed
     """
     if not ticker:
         st.warning("⚠️ Please enter a stock ticker above before analyzing.")
@@ -213,5 +213,5 @@ def perform_stock_news_analysis(ticker):
             if news_df.empty:
                 st.warning(f"No news articles found for {ticker}. Please check the ticker symbol and try again.")
                 return None
-                
+
             return avg_polarity, avg_subjectivity, overall_sentiment, news_df, combined_sentiment
