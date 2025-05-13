@@ -50,11 +50,3 @@ def create_sidebar():
         value=st.session_state.get('num_articles', 3),
         key="num_articles"
     )
-
-    # Add a button to clear results
-    if st.sidebar.button("Clear Saved Results"):
-        st.session_state.analysis_performed = False
-        st.session_state.ticker = ""
-        st.session_state.news_df = pd.DataFrame()
-        st.session_state.combined_sentiment = None
-        st.rerun()

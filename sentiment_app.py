@@ -155,9 +155,15 @@ def main():
     st.header("Enter Text for Analysis")
     user_text = create_text_input()
 
-    # Add the analysis button
-    if st.button("Analyze Sentiment ✨"):
-        perform_analysis(user_text)
+    # Add the analysis button using 2 columns
+    col1, col2 = st.columns(2)
+    with col1:
+        if st.button("Analyze Sentiment ✨"):
+            perform_analysis(user_text)
+    with col2:
+        if st.button("Clear", key="clear_button"):
+            st.session_state.user_input_text = ""
+            st.experimental_rerun()
 
 
 if __name__ == "__main__":

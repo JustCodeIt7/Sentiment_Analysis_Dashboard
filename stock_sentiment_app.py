@@ -252,8 +252,18 @@ def main():
     if ticker:
         st.session_state.ticker = ticker
 
-    # Button to trigger analysis
-    analyze_button = st.button("Analyze Stock News 📰")
+    # Button to trigger analysis with 2 columns
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        analyze_button = st.button("Analyze Stock News 📰")
+    
+    with col2:
+        reset_button = st.button("Reset", key="reset_button")
+        if reset_button:
+            st.session_state.ticker = ""
+            st.session_state.analysis_performed = False
+            st.experimental_rerun()
 
     # Perform analysis when button is pressed or if we have saved results
     if analyze_button:

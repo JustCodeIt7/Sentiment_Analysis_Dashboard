@@ -9,7 +9,12 @@ from datetime import datetime
 
 def create_main_section():
     """Create the main app title and description"""
-    pass
+    st.title("📈 Stock Sentiment Analyzer Final App")
+    st.write(
+        "Enter a stock ticker to get sentiment analysis based on recent news."
+    )
+    st.markdown("---")
+
 
 def display_combined_sentiment(combined_sentiment):
     """
@@ -18,7 +23,30 @@ def display_combined_sentiment(combined_sentiment):
     Parameters:
         combined_sentiment (dict): The combined sentiment data to display
     """
-    pass
+    if not combined_sentiment:
+        return
+
+    st.subheader("Combined Sentiment Analysis")
+    st.write("This analysis combines the text of all articles into a single body for sentiment analysis.")
+
+    combined_cols = st.columns(3)
+    with combined_cols[0]:
+        st.metric(
+            label="Combined Sentiment",
+            value=f"{combined_sentiment['sentiment']} {combined_sentiment['emoji']}"
+        )
+    with combined_cols[1]:
+        st.metric(
+            label="Combined Polarity",
+            value=f"{combined_sentiment['polarity']:.2f}"
+        )
+    with combined_cols[2]:
+        st.metric(
+            label="Combined Subjectivity",
+            value=f"{combined_sentiment['subjectivity']:.2f}"
+        )
+
+
 
 def display_article_details(row):
     """
@@ -58,12 +86,12 @@ def display_news_articles(ticker, news_df):
     for i, row in news_df.iterrows():
         with st.expander(f"{row['title']} {row['full_text_emoji']}"):
             display_article_details(row)
-            
-            
+
+
 def display_analysis_results(ticker, avg_polarity, avg_subjectivity, overall_sentiment, news_df, combined_sentiment):
     """
     Display the full sentiment analysis results
-    
+
     Parameters:
         ticker (str): The stock ticker symbol
         avg_polarity (float): Average polarity score
@@ -72,4 +100,8 @@ def display_analysis_results(ticker, avg_polarity, avg_subjectivity, overall_sen
         news_df (pandas.DataFrame): DataFrame with news and analysis
         combined_sentiment (dict): Combined sentiment data
     """
-    pass
+    # Display combined sentiment analysis if available
+    display_combined_sentiment(combined_sentiment)
+
+    # Display news articles with their sentiment
+    display_news_articles(ticker, news_df)

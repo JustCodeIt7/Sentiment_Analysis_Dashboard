@@ -10,6 +10,7 @@ import streamlit as st
 from config import setup_page, initialize_session_state, create_sidebar
 from ui import create_main_section, display_analysis_results
 from data import perform_stock_news_analysis
+import pandas as pd
 
 def main():
     """Main entry point for the Stock Sentiment Analysis application"""
@@ -32,7 +33,7 @@ def main():
     ticker = st.text_input(
         "Enter Stock Ticker Symbol:",
         value=st.session_state.get('ticker', ''),
-        placeholder="e.g., AAPL, MSFT, GOOGL, TSLA",
+        placeholder="e.g., AAPL, MSFT, GOOGL",
         help="Enter the ticker symbol for the stock you want to analyze"
     ).upper()
 
@@ -40,15 +41,38 @@ def main():
     if ticker:
         st.session_state.ticker = ticker
 
-    # Step 7: Button to trigger analysis
-    analyze_button = st.button("Analyze Stock News 📰")
+
+
+    col1, col2 = st.columns(2)
+    with col1:
+        # Step 7: Button to trigger analysis
+        analyze_button = st.button("Analyze Stock News 📰")
+    with col2:
+        # Add a button to clear results
+        if st.button("Clear Saved Results"):
+            st.session_state.analysis_performed = False
+            st.session_state.ticker = ""
+            st.session_state.news_df = pd.DataFrame()
+            st.session_state.combined_sentiment = None
+            st.rerun()
 
     # Step 8: Perform analysis when button is pressed or if we have saved results
     if analyze_button:
-        pass
+        results = perform_stock_news_analysis(ticker)
+        if results:
+            display_analysis_results(ticker, *results)
     elif st.session_state.analysis_performed and st.session_state.ticker:
         # Display saved results
-        pass
+        display_analysis_results(
+            st.session_state.ticker,
+            st.session_state.avg_polarity,
+            st.session_state.avg_subjectivity,
+            st.session_state.overall_sentiment,
+            st.session_state.news_df,
+            st.session_state.combined_sentiment
+        )
+
+
 
 # Run the app
 if __name__ == "__main__":
