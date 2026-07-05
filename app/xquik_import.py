@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Iterable
+from dataclasses import dataclass
 
 import pandas as pd
 
@@ -20,6 +21,28 @@ TEXT_COLUMNS = (
 AUTHOR_COLUMNS = ("author", "username", "user", "screen_name", "handle", "publisher")
 DATE_COLUMNS = ("created_at", "date", "timestamp", "published")
 SOURCE_ID_COLUMNS = ("id", "tweet_id", "post_id", "source_id", "link")
+
+
+@dataclass(frozen=True)
+class XquikAnalysisResult:
+    avg_polarity: float
+    avg_subjectivity: float
+    overall_sentiment: str
+    news_df: pd.DataFrame
+    combined_sentiment: dict[str, object] | None
+
+    @property
+    def has_rows(self) -> bool:
+        return not self.news_df.empty
+
+    def as_display_args(self) -> tuple[float, float, str, pd.DataFrame, dict[str, object] | None]:
+        return (
+            self.avg_polarity,
+            self.avg_subjectivity,
+            self.overall_sentiment,
+            self.news_df,
+            self.combined_sentiment,
+        )
 
 
 def _match_column(columns: Iterable[str], candidates: tuple[str, ...]) -> str | None:
@@ -50,10 +73,10 @@ def normalize_xquik_export(frame: pd.DataFrame) -> pd.DataFrame:
     return normalized.reset_index(drop=True)
 
 
-def analyze_xquik_posts(frame: pd.DataFrame) -> tuple[float, float, str, pd.DataFrame, dict[str, object] | None]:
+def analyze_xquik_posts(frame: pd.DataFrame) -> XquikAnalysisResult:
     normalized = normalize_xquik_export(frame)
     if normalized.empty:
-        return 0.0, 0.0, "Neutral", pd.DataFrame(), None
+        return XquikAnalysisResult(0.0, 0.0, "Neutral", pd.DataFrame(), None)
 
     rows = []
     for index, row in normalized.iterrows():
@@ -87,4 +110,10 @@ def analyze_xquik_posts(frame: pd.DataFrame) -> tuple[float, float, str, pd.Data
         overall_sentiment = "Neutral"
 
     combined_sentiment = calculate_combined_sentiment(normalized["text"].tolist())
-    return avg_polarity, avg_subjectivity, overall_sentiment, news_df, combined_sentiment
+    return XquikAnalysisResult(
+        avg_polarity,
+        avg_subjectivity,
+        overall_sentiment,
+        news_df,
+        combined_sentiment,
+    )

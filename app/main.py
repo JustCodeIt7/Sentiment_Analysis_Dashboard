@@ -36,12 +36,11 @@ def main():
 
     if uploaded_export is not None:
         export_frame = pd.read_csv(uploaded_export)
-        results = analyze_xquik_posts(export_frame)
-        if results[3].empty:
+        xquik_results = analyze_xquik_posts(export_frame)
+        if not xquik_results.has_rows:
             st.error("CSV needs a text, tweet, full_text, content, body, headline, title, or message column.")
         else:
-            display_analysis_results("Xquik export", *results)
-            return
+            display_analysis_results("Xquik export", *xquik_results.as_display_args())
 
     # Step 6: Input for stock ticker
     ticker = st.text_input(

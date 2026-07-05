@@ -7,7 +7,7 @@ import pandas as pd
 APP_DIR = Path(__file__).resolve().parents[1] / "app"
 sys.path.insert(0, str(APP_DIR))
 
-from xquik_import import normalize_xquik_export
+from xquik_import import analyze_xquik_posts, normalize_xquik_export
 
 
 class XquikImportTests(unittest.TestCase):
@@ -40,6 +40,21 @@ class XquikImportTests(unittest.TestCase):
 
         self.assertEqual(list(result.columns), ["text", "author", "published", "source_id"])
         self.assertEqual(len(result), 0)
+
+    def test_analysis_result_exposes_named_display_fields(self):
+        frame = pd.DataFrame({"text": ["Stock outlook improved"]})
+
+        result = analyze_xquik_posts(frame)
+
+        self.assertTrue(result.has_rows)
+        self.assertEqual(result.news_df.iloc[0]["title"], "Stock outlook improved")
+        self.assertEqual(result.as_display_args()[3].iloc[0]["publisher"], "Xquik export")
+
+    def test_empty_analysis_result_has_no_rows(self):
+        result = analyze_xquik_posts(pd.DataFrame({"score": [1]}))
+
+        self.assertFalse(result.has_rows)
+        self.assertTrue(result.news_df.empty)
 
 
 if __name__ == "__main__":
