@@ -10,6 +10,7 @@ import streamlit as st
 from config import setup_page, initialize_session_state, create_sidebar
 from ui import create_main_section, display_analysis_results
 from data import perform_stock_news_analysis
+from xquik_import import analyze_xquik_posts
 import pandas as pd
 
 def main():
@@ -28,6 +29,19 @@ def main():
 
     # Step 5: Main functionality - Stock analysis section
     st.header("Analyze Stock News Sentiment")
+    uploaded_export = st.file_uploader(
+        "Optional: upload a Xquik export CSV for offline post sentiment",
+        type="csv"
+    )
+
+    if uploaded_export is not None:
+        export_frame = pd.read_csv(uploaded_export)
+        results = analyze_xquik_posts(export_frame)
+        if results[3].empty:
+            st.error("CSV needs a text, tweet, full_text, content, body, headline, title, or message column.")
+        else:
+            display_analysis_results("Xquik export", *results)
+            return
 
     # Step 6: Input for stock ticker
     ticker = st.text_input(

@@ -26,7 +26,6 @@ def get_stock_news(ticker_symbol, num_articles=5):
     try:
         # Get news using yf.Search
         news = yf.Search(ticker_symbol, news_count=num_articles).news
-        print(news)  # Debugging line to check the news data
 
         # Limit to specified number of articles
         if news and len(news) > 0:
