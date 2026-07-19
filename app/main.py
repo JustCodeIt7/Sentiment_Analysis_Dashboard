@@ -13,6 +13,7 @@ from data import perform_stock_news_analysis
 from xquik_import import analyze_xquik_posts
 import pandas as pd
 
+
 def main():
     """Main entry point for the Stock Sentiment Analysis application"""
     # Step 1: Configure the page layout
@@ -30,31 +31,34 @@ def main():
     # Step 5: Main functionality - Stock analysis section
     st.header("Analyze Stock News Sentiment")
     uploaded_export = st.file_uploader(
-        "Optional: upload a Xquik export CSV for offline post sentiment",
-        type="csv"
+        "Optional: upload a Xquik export CSV for offline post sentiment", type="csv"
     )
 
     if uploaded_export is not None:
         export_frame = pd.read_csv(uploaded_export)
         xquik_results = analyze_xquik_posts(export_frame)
-        if not xquik_results.has_rows:
-            st.error("CSV needs a text, tweet, full_text, content, body, headline, title, or message column.")
+        if not xquik_results.has_text_column:
+            st.error(
+                "CSV needs a text, tweet, full_text, content, body, headline, title, or message column."
+            )
+        elif not xquik_results.has_non_empty_text:
+            st.error(
+                "CSV contains a supported text column, but all values are empty or whitespace."
+            )
         else:
             display_analysis_results("Xquik export", *xquik_results.as_display_args())
 
     # Step 6: Input for stock ticker
     ticker = st.text_input(
         "Enter Stock Ticker Symbol:",
-        value=st.session_state.get('ticker', ''),
+        value=st.session_state.get("ticker", ""),
         placeholder="e.g., AAPL, MSFT, GOOGL",
-        help="Enter the ticker symbol for the stock you want to analyze"
+        help="Enter the ticker symbol for the stock you want to analyze",
     ).upper()
 
     # Update ticker in session state when it changes
     if ticker:
         st.session_state.ticker = ticker
-
-
 
     col1, col2 = st.columns(2)
     with col1:
@@ -82,9 +86,8 @@ def main():
             st.session_state.avg_subjectivity,
             st.session_state.overall_sentiment,
             st.session_state.news_df,
-            st.session_state.combined_sentiment
+            st.session_state.combined_sentiment,
         )
-
 
 
 # Run the app

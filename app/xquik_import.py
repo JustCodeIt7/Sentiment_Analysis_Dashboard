@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from collections.abc import Iterable
 from dataclasses import dataclass
+import re
 
 import pandas as pd
 
@@ -11,8 +12,10 @@ from sentiment import analyze_sentiment, calculate_combined_sentiment
 TEXT_COLUMNS = (
     "text",
     "tweet",
+    "tweet_text",
     "full_text",
     "content",
+    "post_content",
     "body",
     "headline",
     "title",
@@ -30,12 +33,16 @@ class XquikAnalysisResult:
     overall_sentiment: str
     news_df: pd.DataFrame
     combined_sentiment: dict[str, object] | None
+    has_text_column: bool
+    has_non_empty_text: bool
 
     @property
     def has_rows(self) -> bool:
         return not self.news_df.empty
 
-    def as_display_args(self) -> tuple[float, float, str, pd.DataFrame, dict[str, object] | None]:
+    def as_display_args(
+        self,
+    ) -> tuple[float, float, str, pd.DataFrame, dict[str, object] | None]:
         return (
             self.avg_polarity,
             self.avg_subjectivity,
@@ -46,7 +53,10 @@ class XquikAnalysisResult:
 
 
 def _match_column(columns: Iterable[str], candidates: tuple[str, ...]) -> str | None:
-    by_key = {column.strip().lower(): column for column in columns}
+    by_key = {
+        re.sub(r"[^a-z0-9]+", "_", column.strip().lower()).strip("_"): column
+        for column in columns
+    }
     for candidate in candidates:
         if candidate in by_key:
             return by_key[candidate]
@@ -68,15 +78,26 @@ def normalize_xquik_export(frame: pd.DataFrame) -> pd.DataFrame:
     normalized["text"] = _clean(frame, text_column)
     normalized["author"] = _clean(frame, _match_column(frame.columns, AUTHOR_COLUMNS))
     normalized["published"] = _clean(frame, _match_column(frame.columns, DATE_COLUMNS))
-    normalized["source_id"] = _clean(frame, _match_column(frame.columns, SOURCE_ID_COLUMNS))
+    normalized["source_id"] = _clean(
+        frame, _match_column(frame.columns, SOURCE_ID_COLUMNS)
+    )
     normalized = normalized[normalized["text"] != ""]
     return normalized.reset_index(drop=True)
 
 
 def analyze_xquik_posts(frame: pd.DataFrame) -> XquikAnalysisResult:
+    has_text_column = _match_column(frame.columns, TEXT_COLUMNS) is not None
     normalized = normalize_xquik_export(frame)
     if normalized.empty:
-        return XquikAnalysisResult(0.0, 0.0, "Neutral", pd.DataFrame(), None)
+        return XquikAnalysisResult(
+            0.0,
+            0.0,
+            "Neutral",
+            pd.DataFrame(),
+            None,
+            has_text_column,
+            False,
+        )
 
     rows = []
     for index, row in normalized.iterrows():
@@ -116,4 +137,6 @@ def analyze_xquik_posts(frame: pd.DataFrame) -> XquikAnalysisResult:
         overall_sentiment,
         news_df,
         combined_sentiment,
+        True,
+        True,
     )
